@@ -9,11 +9,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "continuation-local-storage": "^3.2.1",
     "mysql2": "^2.3.0",
-    "sequelize": "^6.6.5"
+    "sequelize": "^6.6.5",
+    "sequelize-paper-trail": "^3.0.1",
+    "sequelize-temporal": "^1.0.8"
   },
   "devDependencies": {
-    "nodemon": "^2.0.12"
+    "nodemon": "^2.0.12",
+    "sequelize-cli": "^6.2.0"
   },
   "description": ""
 }

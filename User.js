@@ -1,9 +1,7 @@
-const { DataTypes, sequelize,Model } = require('./sequelize');
+const { DataTypes, sequelize, Model } = require('./sequelize');
 
 
-class User extends Model {
-
-};
+class User extends Model { };
 User.init({
     firstName: {
         type: DataTypes.STRING,
@@ -17,7 +15,12 @@ User.init({
     {
         sequelize: sequelize,
         modelName: "User",
-        tableName: 'users'
     }
 );
+User.hasPaperTrail();
+
+
+
+
 module.exports = User;
+
