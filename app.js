@@ -1,22 +1,52 @@
+const epxress = require('express');
+const app = epxress();
 const { sequelize, Sequelize, DataTypes, Model } = require('./sequelize');
 const { sync } = require('./sync');
 const { Product, User, UserHistory } = require('./model');
 const { findIp } = require('./ipFinder');
+const useragent = require('express-useragent');
 
 
-sync();
+
+app.get('/', (req, res, next) => {
+    User.beforeUpdate(async (user, options) => {
+        const userIp = await findIp();
+        await UserHistory.create({
+            user_id: user._previousDataValues.id,
+            firstName: user._previousDataValues.firstName,
+            lastName: user._previousDataValues.lastName,
+            opration: 'update',
+            ip: userIp,
+            platform: useragent.parse(req.headers['user-agent'].platform)
+        });
+    });
+    const source = req.headers['user-agent'];
+    const ua = useragent.parse(source);
+    console.log(ua.platform, ua.browser);
+
+    async function update() {
+        const userIp = await findIp();
+        User.update({ lastName: 'kalim ', ip: userIp }, { where: { id: 1 } }).then(() => { console.log('user updated'); });
+    }
+    update();
+
+    res.json(JSON.stringify(ua.platform));
+});
 
 
-// User.beforeUpdate(async (user, options) => {
-//     const userIp =await findIp();
-//     await UserHistory.create({
-//         user_id: user._previousDataValues.id,
-//         firstName: user._previousDataValues.firstName,
-//         lastName: user._previousDataValues.lastName,
-//         opration: 'update',
-//         ip: userIp
-//     });
-// });
+
+sync().then((async data => {
+    try {
+        await app.listen(3000);
+        console.log('db connected & server runs');
+    } catch (error) {
+        throw new Error(error);
+    }
+
+}));;
+
+
+
 // User.beforeDestroy(async (user, options) => {
 //     const userIp =await findIp();
 //     await UserHistory.create({
@@ -29,11 +59,7 @@ sync();
 // });
 
 
-async function update() {
-    const userIp = await findIp();
-    User.update({ lastName: 'kalim onjaro', ip: userIp }, { where: { id: 1 } }).then(() => { console.log('user updated'); });
-}
-update();
+
 
 
 // User.destroy({ where: { id: 1 } }).then(() => { console.log('user destroyed'); });

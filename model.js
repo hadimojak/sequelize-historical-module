@@ -34,6 +34,7 @@ UserHistory.init({
     },
     ip: { type: DataTypes.STRING },
     opration: { type: DataTypes.STRING },
+    paltForm: { type: DataTypes.STRING },
     updatedAt: {
         type: Sequelize.DATE,
         defaultValue: new Date()

@@ -10,6 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "continuation-local-storage": "^3.2.1",
+    "express": "^4.17.1",
+    "express-useragent": "^1.0.15",
     "ip": "^1.1.5",
     "mysql2": "^2.3.0",
     "public-ip": "^4.0.4",
