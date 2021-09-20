@@ -9,7 +9,6 @@ User.init({
         type: DataTypes.STRING,
         allowNull: false
     },
-    ip: { type: DataTypes.STRING },
     createdAt: Sequelize.DATE,
     updatedAt: Sequelize.DATE,
 },
@@ -18,8 +17,6 @@ User.init({
         modelName: "user", paranoid: true
     }
 );
-
-
 
 class UserHistory extends Model { };
 UserHistory.init({
@@ -34,7 +31,7 @@ UserHistory.init({
     },
     ip: { type: DataTypes.STRING },
     opration: { type: DataTypes.STRING },
-    paltForm: { type: DataTypes.STRING },
+    platform: { type: DataTypes.STRING },
     updatedAt: {
         type: Sequelize.DATE,
         defaultValue: new Date()
@@ -60,10 +57,28 @@ Product.init({
 }
 );
 
-
+class ProductHistory extends Model { };
+ProductHistory.init({
+    product_id: { type: DataTypes.INTEGER },
+    title: {
+        type: DataTypes.STRING,
+    },
+    price: {
+        type: DataTypes.INTEGER,
+    },
+    ip: { type: DataTypes.STRING },
+    opration: { type: DataTypes.STRING },
+    platform: { type: DataTypes.STRING },
+    updatedAt: {
+        type: Sequelize.DATE,
+        defaultValue: new Date()
+    },
+}, {
+    sequelize: sequelize, timestamps: false,
+    modelName: "productHistory"
+});
 
 User.hasMany(Product);
 Product.belongsTo(User);
 
-
-module.exports = { User, Product, UserHistory };
+module.exports = { User, Product, UserHistory, ProductHistory };
