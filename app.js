@@ -28,14 +28,14 @@ app.get('/', (req, res, next) => {
     // create();
 
     // async function update1() {
-    //     User.update({ lastName: 'alllameh ' }, { where: { id: 2 }, individualHooks: true }).
+    //     User.update({ lastName: 'nayimi ' }, { where: { id: 1 }, individualHooks: true }).
     //         then(() => { console.log('user updated'); }).
     //         catch(err => { console.log(err); });
     // }
     // update1();
 
     // async function update() {
-    //     Product.update({ title: 'tahdigggg ' }, { where: { id: 4 }, individualHooks: true }).
+    //     Product.update({ title: 'box ' }, { where: { id: 1 }, individualHooks: true }).
     //         then(() => { console.log('product updated'); }).
     //         catch(err => { console.log(err); });
     // }
@@ -82,21 +82,21 @@ app.get('/', (req, res, next) => {
             lastName: userHistory.lastName,
         }, { where: { id: userHistory.user_id }, individualHooks: true });
     };
-    undoUpdatedUser(1, 16);
+    undoUpdatedUser(2, 0);
 
-    async function undoUpdatedProduct(id, historyId) {
-        req.undo = true;
-        const arrayHistory = await ProductHistory.
-            findAll({ where: { product_id: id, opration: 'update' }, order: [['id', 'ASC']] });
-        const productHistory = arrayHistory[historyId].dataValues;
-        console.log(productHistory);
-        await Product.update({
-            title: productHistory.title,
-            price: productHistory.price,
-            price: productHistory.price,
-        }, { where: { id: productHistory.product_id }, individualHooks: true });
-    };
-    undoUpdatedProduct(4, 0);
+    // async function undoUpdatedProduct(id, historyId) {
+    //     req.undo = true;
+    //     const arrayHistory = await ProductHistory.
+    //         findAll({ where: { product_id: id, opration: 'update' }, order: [['id', 'ASC']] });
+    //     const productHistory = arrayHistory[historyId].dataValues;
+    //     console.log(productHistory);
+    //     await Product.update({
+    //         title: productHistory.title,
+    //         price: productHistory.price,
+    //         price: productHistory.price,
+    //     }, { where: { id: productHistory.product_id }, individualHooks: true });
+    // };
+    // undoUpdatedProduct(1, 0);
 
     res.json('userIp');
 });
