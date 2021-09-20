@@ -36,6 +36,10 @@ UserHistory.init({
         type: Sequelize.DATE,
         defaultValue: new Date()
     },
+    undo: {
+        type: Sequelize.DATE,
+        defaultValue: null
+    }
 }, {
     sequelize: sequelize, timestamps: false,
     modelName: "userHistory"
@@ -73,6 +77,10 @@ ProductHistory.init({
         type: Sequelize.DATE,
         defaultValue: new Date()
     },
+    undo: {
+        type: Sequelize.DATE,
+        defaultValue: null
+    }
 }, {
     sequelize: sequelize, timestamps: false,
     modelName: "productHistory"

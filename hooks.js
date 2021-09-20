@@ -11,14 +11,17 @@ class UserHook extends User {
             || req.connection.remoteAddress
             || req.socket.remoteAddress
             || req.connection.socket.remoteAddress;
+
         User.beforeUpdate(async (user, options) => {
+
             await UserHistory.create({
                 user_id: user._previousDataValues.id,
                 firstName: user._previousDataValues.firstName,
                 lastName: user._previousDataValues.lastName,
-                opration: 'update',
+                opration: req.undo ? 'undo-update' : 'update',
                 ip: userIp,
-                platform: ua.platform
+                platform: ua.platform,
+                undo: req.undo ? new Date() : null
             });
         });
 
@@ -31,6 +34,18 @@ class UserHook extends User {
                 opration: 'delete',
                 ip: userIp,
                 platform: ua.platform
+            });
+        });
+
+        User.beforeRestore(async (user, options) => {
+            await UserHistory.create({
+                user_id: user._previousDataValues.id,
+                firstName: user._previousDataValues.firstName,
+                lastName: user._previousDataValues.lastName,
+                opration: 'undo-delete',
+                ip: userIp,
+                platform: ua.platform,
+                undo: req.undo ? new Date() : null
             });
         });
     }
@@ -51,9 +66,10 @@ class ProductHook extends Product {
                 product_id: product._previousDataValues.id,
                 title: product._previousDataValues.title,
                 price: product._previousDataValues.price,
-                opration: 'update',
+                opration: req.undo ? 'undo-update' : 'update',
                 ip: userIp,
-                platform: ua.platform
+                platform: ua.platform,
+                undo: req.undo ? new Date() : null
             });
         });
 
@@ -68,6 +84,19 @@ class ProductHook extends Product {
                 platform: ua.platform
             });
         });
+
+        Product.beforeRestore(async (product, options) => {
+            await ProductHistory.create({
+                product_id: product._previousDataValues.id,
+                title: product._previousDataValues.title,
+                price: product._previousDataValues.price,
+                opration: 'undo-delete',
+                ip: userIp,
+                platform: ua.platform,
+                undo: req.undo ? new Date() : null
+            });
+        });
+
     }
 }
 
