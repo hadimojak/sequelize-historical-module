@@ -1,6 +1,7 @@
 const { User, UserHistory, Product, ProductHistory } = require('./model');
 const useragent = require('express-useragent');
 
+class Hooks { constructor() { } }
 
 class UserHook extends User {
     constructor(req) {
