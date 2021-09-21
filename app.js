@@ -7,8 +7,8 @@ const hooks = require('./hooks');
 
 
 app.get('/', (req, res, next) => {
-    new hooks(req, User, UserHistory).throwHook();
-    new hooks(req, Product, ProductHistory).throwHook();
+    new hooks(req, User, UserHistory,{}).throwHook();
+    new hooks(req, Product, ProductHistory,{}).throwHook();
 
     // async function create() {
     //     User.bulkCreate([
@@ -27,18 +27,18 @@ app.get('/', (req, res, next) => {
     // create();
 
     // async function update1() {
-    //     User.update({ firstName: "hadiz", lastName: 'arbabi', }, { where: { id: 1 }, individualHooks: true }).
+    //     User.update({  lastName: 'zanjani' }, { where: { id: 1 }, individualHooks: true }).
     //         then(() => { console.log('user updated'); }).
     //         catch(err => { console.log(err); });
     // }
     // update1();
 
-    // async function update() {
-    //     Product.update({ title: 'box ' }, { where: { id: 2 }, individualHooks: true }).
-    //         then(() => { console.log('product updated'); }).
-    //         catch(err => { console.log(err); });
-    // }
-    // update();
+    async function update() {
+        Product.update({ title: 'khatkesh' }, { where: { id: 3 }, individualHooks: true }).
+            then(() => { console.log('product updated'); }).
+            catch(err => { console.log(err); });
+    }
+    update();
 
     // async function destroy1() {
     //     Product.destroy({ where: { id: 2 }, individualHooks: true }).
@@ -73,13 +73,12 @@ app.get('/', (req, res, next) => {
     //     const arrayHistory = await UserHistory.
     //         findAll({ where: { user_id: id, opration: 'update' }, order: [['id', 'ASC']] });
     //     const userHistory = arrayHistory[historyId].dataValues;
-    //     console.log(userHistory);
     //     await User.update({
     //         firstName: userHistory.firstName,
     //         lastName: userHistory.lastName,
     //     }, { where: { id: userHistory.user_id }, individualHooks: true });
     // };
-    // undoUpdatedUser(2, 0);
+    // undoUpdatedUser(1, 22);
 
     // async function undoUpdatedProduct(id, historyId) {
     //     req.undo = true;
