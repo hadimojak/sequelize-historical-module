@@ -26,12 +26,12 @@ app.get('/', (req, res, next) => {
     // };
     // create();
 
-    async function update1() {
-        User.update({ firstName: "hadi", lastName: 'arbabi', }, { where: { id: 1 }, individualHooks: true }).
-            then(() => { console.log('user updated'); }).
-            catch(err => { console.log(err); });
-    }
-    update1();
+    // async function update1() {
+    //     User.update({ firstName: "hadiz", lastName: 'arbabi', }, { where: { id: 1 }, individualHooks: true }).
+    //         then(() => { console.log('user updated'); }).
+    //         catch(err => { console.log(err); });
+    // }
+    // update1();
 
     // async function update() {
     //     Product.update({ title: 'box ' }, { where: { id: 2 }, individualHooks: true }).

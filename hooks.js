@@ -33,7 +33,6 @@ class Hooks {
                 let name = JSON.parse(JSON.stringify(this.modelHisAttr[i]));
                 Object.assign(body, { [name]: values[i] });
             }
-            console.log(body)
             return body;
         };
     }
