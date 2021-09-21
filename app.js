@@ -6,10 +6,9 @@ const { Product, User, UserHistory, ProductHistory } = require('./model');
 const hooks = require('./hooks');
 
 
-
 app.get('/', (req, res, next) => {
-    new hooks.UserHook(req);
-    new hooks.ProductHook(req);
+    new hooks(req, User, UserHistory).throwHook();
+    new hooks(req, Product, ProductHistory).throwHook();
 
     // async function create() {
     //     User.bulkCreate([
@@ -18,38 +17,38 @@ app.get('/', (req, res, next) => {
     //         { firstName: 'ali', lastName: 'mashali' },]).then(() => {
     //             console.log('user created');
     //             Product.bulkCreate([
-    //                 { title: 'apple', price: 610, userId: 1 },
-    //                 { title: 'car', price: 25000, userId: 2 },
-    //                 { title: 'bike', price: 3000, userId: 2 },
-    //                 { title: 'blackboard', price: 300, userId: 3 },
-    //                 { title: 'chair', price: 1633, userId: 1 },]);
+    //                 { title: 'apple', price: 610, store: 5, userId: 1 },
+    //                 { title: 'car', price: 25000, store: 1, userId: 2 },
+    //                 { title: 'bike', price: 3000, store: 1, userId: 2 },
+    //                 { title: 'blackboard', price: 300, store: 1, userId: 3 },
+    //                 { title: 'chair', price: 1633, store: 1, userId: 1 },]);
     //         });
     // };
     // create();
 
-    // async function update1() {
-    //     User.update({ lastName: 'nayimi ' }, { where: { id: 1 }, individualHooks: true }).
-    //         then(() => { console.log('user updated'); }).
-    //         catch(err => { console.log(err); });
-    // }
-    // update1();
+    async function update1() {
+        User.update({ firstName: "hadi", lastName: 'arbabi', }, { where: { id: 1 }, individualHooks: true }).
+            then(() => { console.log('user updated'); }).
+            catch(err => { console.log(err); });
+    }
+    update1();
 
     // async function update() {
-    //     Product.update({ title: 'box ' }, { where: { id: 1 }, individualHooks: true }).
+    //     Product.update({ title: 'box ' }, { where: { id: 2 }, individualHooks: true }).
     //         then(() => { console.log('product updated'); }).
     //         catch(err => { console.log(err); });
     // }
     // update();
 
     // async function destroy1() {
-    //     Product.destroy({ where: { id: 1 }, individualHooks: true }).
+    //     Product.destroy({ where: { id: 2 }, individualHooks: true }).
     //         then(() => { console.log('product destroyed'); }).
     //         catch(err => { console.log(err); });
     // }
     // destroy1();
 
     // async function destroy() {
-    //     User.destroy({ where: { id: 1 }, individualHooks: true }).
+    //     User.destroy({ where: { id: 2 }, individualHooks: true }).
     //         then(() => { console.log('user destroyed'); }).
     //         catch(err => { console.log(err); });
     // }
@@ -58,31 +57,29 @@ app.get('/', (req, res, next) => {
     // async function undoDeletedUser(id) {
     //     req.undo = true;
     //     const user = await User.findByPk(id, { paranoid: false });
-    //     console.log(user);
     //     await user.restore();
     // };
-    // undoDeletedUser(1);
+    // undoDeletedUser(2);
 
     // async function undoDeletedProduct(id) {
     //     req.undo = true;
     //     const product = await Product.findByPk(id, { paranoid: false });
-    //     console.log(product);
     //     await product.restore();
     // };
     // undoDeletedProduct(1);
 
-    async function undoUpdatedUser(id, historyId) {
-        req.undo = true;
-        const arrayHistory = await UserHistory.
-            findAll({ where: { user_id: id, opration: 'update' }, order: [['id', 'ASC']] });
-        const userHistory = arrayHistory[historyId].dataValues;
-        console.log(userHistory);
-        await User.update({
-            firstName: userHistory.firstName,
-            lastName: userHistory.lastName,
-        }, { where: { id: userHistory.user_id }, individualHooks: true });
-    };
-    undoUpdatedUser(2, 0);
+    // async function undoUpdatedUser(id, historyId) {
+    //     req.undo = true;
+    //     const arrayHistory = await UserHistory.
+    //         findAll({ where: { user_id: id, opration: 'update' }, order: [['id', 'ASC']] });
+    //     const userHistory = arrayHistory[historyId].dataValues;
+    //     console.log(userHistory);
+    //     await User.update({
+    //         firstName: userHistory.firstName,
+    //         lastName: userHistory.lastName,
+    //     }, { where: { id: userHistory.user_id }, individualHooks: true });
+    // };
+    // undoUpdatedUser(2, 0);
 
     // async function undoUpdatedProduct(id, historyId) {
     //     req.undo = true;

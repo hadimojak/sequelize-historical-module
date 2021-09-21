@@ -1,104 +1,76 @@
-const { User, UserHistory, Product, ProductHistory } = require('./model');
+// const { User, UserHistory, Product, ProductHistory } = require('./model');
 const useragent = require('express-useragent');
+const { sequelize, DataTypes, Sequelize, Model } = require('./sequelize');
 
-class Hooks { constructor() { } }
-
-class UserHook extends User {
-    constructor(req) {
-        super();
+class Hooks {
+    constructor(req, model, modelHistory) {
         const source = req.headers['user-agent'];
-        const ua = useragent.parse(source);
-        const userIp = req.ip
+        this.ua = useragent.parse(source);
+        this.userIp = req.ip
             || req.connection.remoteAddress
             || req.socket.remoteAddress
             || req.connection.socket.remoteAddress;
-
-        User.beforeUpdate(async (user, options) => {
-
-            await UserHistory.create({
-                user_id: user._previousDataValues.id,
-                firstName: user._previousDataValues.firstName,
-                lastName: user._previousDataValues.lastName,
-                opration: req.undo ? 'undo-update' : 'update',
-                ip: userIp,
-                platform: ua.platform,
-                undo: req.undo ? new Date() : null
-            });
+        this.model = model;
+        this.modelHistory = modelHistory;
+        this.req = req;
+        //measurement dynamic attribute in model hostory
+        this.modelHisAttr = [];
+        for (let key in this.modelHistory.rawAttributes) {
+            this.modelHisAttr.push(key);
+        }
+        this.modelHisAttr = this.modelHisAttr.filter(p => {
+            if (p !== 'createdAt' && p !== 'updatedAt' && p !== 'deletedAt'
+                && p !== 'id' && p !== 'ip' && p !== 'restoredAt'
+                && p !== 'opration' && p !== 'platform') {
+                return p;
+            }
         });
-
-
-        User.beforeDestroy(async (user, options) => {
-            await UserHistory.create({
-                user_id: user._previousDataValues.id,
-                firstName: user._previousDataValues.firstName,
-                lastName: user._previousDataValues.lastName,
-                opration: 'delete',
-                ip: userIp,
-                platform: ua.platform
-            });
-        });
-
-        User.beforeRestore(async (user, options) => {
-            await UserHistory.create({
-                user_id: user._previousDataValues.id,
-                firstName: user._previousDataValues.firstName,
-                lastName: user._previousDataValues.lastName,
-                opration: 'undo-delete',
-                ip: userIp,
-                platform: ua.platform,
-                undo: req.undo ? new Date() : null
-            });
-        });
+        //helper function for hooks
+        this.hookHelper = function (user) {
+            const body = {};
+            const values = Object.values(user._previousDataValues);
+            for (let i = 0; i < this.modelHisAttr.length; i++) {
+                let name = JSON.parse(JSON.stringify(this.modelHisAttr[i]));
+                Object.assign(body, { [name]: values[i] });
+            }
+            console.log(body)
+            return body;
+        };
     }
-}
 
-class ProductHook extends Product {
-    constructor(req) {
-        super();
-        const source = req.headers['user-agent'];
-        const ua = useragent.parse(source);
-        const userIp = req.ip
-            || req.connection.remoteAddress
-            || req.socket.remoteAddress
-            || req.connection.socket.remoteAddress;
-
-        Product.beforeUpdate(async (product, options) => {
-            await ProductHistory.create({
-                product_id: product._previousDataValues.id,
-                title: product._previousDataValues.title,
-                price: product._previousDataValues.price,
-                opration: req.undo ? 'undo-update' : 'update',
-                ip: userIp,
-                platform: ua.platform,
-                undo: req.undo ? new Date() : null
+    throwHook() {
+        this.model.beforeUpdate(async (user, options) => {
+            const body = this.hookHelper(user);
+            await this.modelHistory.create({
+                ...body,
+                opration: this.req.undo ? 'undo-update' : 'update',
+                ip: this.userIp,
+                platform: this.ua.platform,
+                restoredAt: this.req.undo ? new Date() : null
             });
         });
-
-
-        Product.beforeDestroy(async (product, options) => {
-            await ProductHistory.create({
-                product_id: product._previousDataValues.id,
-                title: product._previousDataValues.title,
-                price: product._previousDataValues.price,
+        this.model.beforeDestroy(async (user, options) => {
+            const body = this.hookHelper(user);
+            await this.modelHistory.create({
+                ...body,
                 opration: 'delete',
-                ip: userIp,
-                platform: ua.platform
+                ip: this.userIp,
+                platform: this.ua.platform,
+                restoredAt: null
+            });
+        });
+        this.model.beforeRestore(async (user, options) => {
+            const body = this.hookHelper(user);
+            await this.modelHistory.create({
+                ...body,
+                opration: 'undo-delete',
+                ip: this.userIp,
+                platform: this.ua.platform,
+                restoredAt: this.req.undo ? new Date() : null
             });
         });
 
-        Product.beforeRestore(async (product, options) => {
-            await ProductHistory.create({
-                product_id: product._previousDataValues.id,
-                title: product._previousDataValues.title,
-                price: product._previousDataValues.price,
-                opration: 'undo-delete',
-                ip: userIp,
-                platform: ua.platform,
-                undo: req.undo ? new Date() : null
-            });
-        });
 
     }
 }
-
-module.exports = { UserHook, ProductHook };
+module.exports = Hooks;

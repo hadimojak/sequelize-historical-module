@@ -1,5 +1,6 @@
 const { sequelize, DataTypes, Sequelize, Model } = require('./sequelize');
 
+
 class User extends Model { };
 User.init({
     firstName: {
@@ -23,11 +24,11 @@ UserHistory.init({
     user_id: { type: DataTypes.INTEGER },
     firstName: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
     lastName: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
     ip: { type: DataTypes.STRING },
     opration: { type: DataTypes.STRING },
@@ -36,7 +37,7 @@ UserHistory.init({
         type: Sequelize.DATE,
         defaultValue: new Date()
     },
-    undo: {
+    restoredAt: {
         type: Sequelize.DATE,
         defaultValue: null
     }
@@ -53,7 +54,11 @@ Product.init({
     }, price: {
         type: DataTypes.INTEGER,
         allowNull: false
-    }, createdAt: Sequelize.DATE,
+    }, store: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    createdAt: Sequelize.DATE,
     updatedAt: Sequelize.DATE,
 }, {
     sequelize: sequelize,
@@ -69,6 +74,9 @@ ProductHistory.init({
     },
     price: {
         type: DataTypes.INTEGER,
+    }, store: {
+        type: DataTypes.INTEGER,
+        allowNull: true
     },
     ip: { type: DataTypes.STRING },
     opration: { type: DataTypes.STRING },
@@ -77,7 +85,7 @@ ProductHistory.init({
         type: Sequelize.DATE,
         defaultValue: new Date()
     },
-    undo: {
+    restoredAt: {
         type: Sequelize.DATE,
         defaultValue: null
     }
