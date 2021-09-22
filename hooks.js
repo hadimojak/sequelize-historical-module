@@ -27,21 +27,21 @@ class Hooks {
         });
         //helper function for hooks
         this.hookHelper = function (user) {
-            // const change = Array.from(user._changed);
+            const change = Array.from(user._changed);
             const body = {};
             const values = Object.values(user._previousDataValues);
             for (let i = 0; i < this.modelHisAttr.length; i++) {
                 let name = JSON.parse(JSON.stringify(this.modelHisAttr[i]));
-                Object.assign(body, { [name]: values[i] });
-                // if (i === 0 ) {
-                //     Object.assign(body, { [name]: values[i] });
-                // } else {
-                //     if (!change.includes(name)) {
-                //         Object.assign(body, { [name]: null });
-                //     } else {
-                //         Object.assign(body, { [name]: values[i] });
-                //     }
-                // }
+                // Object.assign(body, { [name]: values[i] });
+                if (i === 0 ) {
+                    Object.assign(body, { [name]: values[i] });
+                } else {
+                    if (!change.includes(name)) {
+                        Object.assign(body, { [name]: null });
+                    } else {
+                        Object.assign(body, { [name]: values[i] });
+                    }
+                }
 
             }
             return body;
