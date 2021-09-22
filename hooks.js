@@ -3,7 +3,7 @@ const useragent = require('express-useragent');
 const { sequelize, DataTypes, Sequelize, Model } = require('./sequelize');
 
 class Hooks {
-    constructor(req, model, modelHistory) {
+    constructor(req, model, modelHistory, options) {
         const source = req.headers['user-agent'];
         this.ua = useragent.parse(source);
         this.userIp = req.ip
@@ -32,15 +32,19 @@ class Hooks {
             const values = Object.values(user._previousDataValues);
             for (let i = 0; i < this.modelHisAttr.length; i++) {
                 let name = JSON.parse(JSON.stringify(this.modelHisAttr[i]));
-                // Object.assign(body, { [name]: values[i] });
-                if (i === 0 ) {
+                if (options.fullRow) {
                     Object.assign(body, { [name]: values[i] });
                 } else {
-                    if (!change.includes(name)) {
-                        Object.assign(body, { [name]: null });
-                    } else {
+                    if (i === 0) {
                         Object.assign(body, { [name]: values[i] });
+                    } else {
+                        if (!change.includes(name)) {
+                            Object.assign(body, { [name]: null });
+                        } else {
+                            Object.assign(body, { [name]: values[i] });
+                        }
                     }
+
                 }
 
             }
