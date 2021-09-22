@@ -64,66 +64,68 @@ app.get('/', (req, res, next) => {
     // }
     // destroy1(User, 2);
 
-    async function undo_delete(model, pk) {
-        try {
-            req.undo = true;
-            const ids = [];
-            await model.findAll({ attributes: ['id'], paranoid: false }).then(data => {
-                data.forEach(p => { ids.push(p.dataValues.id); });
-            }).catch(err => { console.log(err); });
-            if (!ids.includes(pk)) { throw new Error('Id not exict in databae'); }
-            await model.findByPk(pk, { paranoid: false }).then(data => {
-                if (data.dataValues.deletedAt === null) {
-                    throw new Error('this row is already restored or not deleted at all');
-                }
-            }).catch(err => { console.log(err); });
-            const user = await model.findByPk(pk, { paranoid: false });
-            await user.restore();
-        } catch (error) { console.log(error.message); }
-    };
-    undo_delete(User, 2);
-
-    // async function undo_update(model, modelHistory, pk, historyId) {
-    //     req.undo = true;
-    //     let tablename = model.tableName;
-    //     tablename = tablename.slice(0, tablename.length - 1);
-    //     let searchTerm = {};
-    //     Object.assign(searchTerm, { [tablename + '_id']: pk });
-    //     Object.assign(searchTerm, { opration: 'update' });
+    // async function undo_delete(model, pk) {
     //     try {
+    //         req.undo = true;
     //         const ids = [];
-    //         await model.findAll({ attributes: ['id'] }).then(data => {
-    //             data.forEach(p => {
-    //                 ids.push(p.dataValues.id);
-    //             });
+    //         await model.findAll({ attributes: ['id'], paranoid: false }).then(data => {
+    //             data.forEach(p => { ids.push(p.dataValues.id); });
     //         }).catch(err => { console.log(err); });
-    //         if (!ids.includes(pk)) {
-    //             throw new Error('Id not exict in databae');
-    //         }
-    //         const arrayHistory = await modelHistory.
-    //             findAll({ where: searchTerm });
-    //         if (historyId >= arrayHistory.length) {
-    //             throw new Error('your historyID is more than model history id');
-    //         }
-    //         const history = arrayHistory[historyId].dataValues;
-    //         let modelHisAttr = [];
-    //         for (let key in history) {
-    //             modelHisAttr.push(key);
-    //         }
-    //         modelHisAttr = modelHisAttr.filter(p => {
-    //             if (p !== 'createdAt' && p !== 'updatedAt' && p !== 'deletedAt' && p !== 'id' && p !== 'ip' && p !== 'restoredAt' && p !== 'opration' && p !== 'platform' && p !== Object.keys(history)[1]) {
-    //                 return p;
+    //         if (!ids.includes(pk)) { throw new Error('Id not exict in databae'); }
+    //         await model.findByPk(pk, { paranoid: false }).then(data => {
+    //             if (data.dataValues.deletedAt === null) {
+    //                 throw new Error('this row is already restored or not deleted at all');
     //             }
-    //         });
-    //         let undoTerm = {};
-    //         for (let i = 0; i < modelHisAttr.length; i++) {
-    //             let name = JSON.parse(JSON.stringify(modelHisAttr[i]));
-    //             Object.assign(undoTerm, { [name]: history[name] });
-    //         }
-    //         await model.update({ ...undoTerm }, { where: { id: Object.values(history)[1] }, individualHooks: true });
+    //         }).catch(err => { console.log(err); });
+    //         const user = await model.findByPk(pk, { paranoid: false });
+    //         await user.restore();
     //     } catch (error) { console.log(error.message); }
     // };
-    // undo_update(User, UserHistory, 1, 0);
+    // undo_delete(User, 2);
+
+    async function undo_update(model, modelHistory, pk, historyId) {
+        req.undo = true;
+        let tablename = model.tableName;
+        tablename = tablename.slice(0, tablename.length - 1);
+        let searchTerm = {};
+        Object.assign(searchTerm, { [tablename + '_id']: pk });
+        Object.assign(searchTerm, { opration: 'update' });
+        try {
+            const ids = [];
+            await model.findAll({ attributes: ['id'] }).then(data => {
+                data.forEach(p => {
+                    ids.push(p.dataValues.id);
+                });
+            }).catch(err => { console.log(err); });
+            if (!ids.includes(pk)) {
+                throw new Error('Id not exict in databae');
+            }
+            const arrayHistory = await modelHistory.
+                findAll({ where: searchTerm, order: [['id', 'ASC']] });
+            if (historyId >= arrayHistory.length) {
+                throw new Error('your historyID is more than model history id');
+            }
+            const history = arrayHistory[historyId].dataValues;
+            let modelHisAttr = [];
+            for (let key in history) {
+                modelHisAttr.push(key);
+            }
+            modelHisAttr = modelHisAttr.filter(p => {
+                if (p !== 'createdAt' && p !== 'updatedAt' && p !== 'deletedAt' && p !== 'id' && p !== 'ip' && p !== 'restoredAt' && p !== 'opration' && p !== 'platform' && p !== Object.keys(history)[1]) {
+                    return p;
+                }
+            });
+            let undoTerm = {};
+            for (let i = 0; i < modelHisAttr.length; i++) {
+                let name = JSON.parse(JSON.stringify(modelHisAttr[i]));
+                if (history[name] === null) { break; }
+                Object.assign(undoTerm, { [name]: history[name] });
+            }
+            console.log(undoTerm);
+            await model.update({ ...undoTerm }, { where: { id: Object.values(history)[1] }, individualHooks: true });
+        } catch (error) { console.log(error.message); }
+    };
+    undo_update(User, UserHistory, 1, 29);
 
     res.json('userIp');
 });
