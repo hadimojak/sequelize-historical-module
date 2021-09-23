@@ -1,4 +1,4 @@
-# cobex-sequelize-Journaling
+# sequelize-Journaling
 
 hooks.js : this file is Responsible for creating hooks in sequelize models and
         all the hooks are export from the file and requier and intialize in 
