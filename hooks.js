@@ -1,6 +1,5 @@
-// const { User, UserHistory, Product, ProductHistory } = require('./model');
+//require user agant for get the platform information and Anything you need from request
 const useragent = require('express-useragent');
-const { sequelize, DataTypes, Sequelize, Model } = require('./sequelize');
 
 class Hooks {
     constructor(req, model, modelHistory, options) {
@@ -13,11 +12,12 @@ class Hooks {
         this.model = model;
         this.modelHistory = modelHistory;
         this.req = req;
+
         //measurement dynamic attribute in model history
         this.modelHisAttr = [];
-        for (let key in this.modelHistory.rawAttributes) {
-            this.modelHisAttr.push(key);
-        }
+        for (let key in this.modelHistory.rawAttributes) { this.modelHisAttr.push(key); }
+
+        //detach unnecessary items from model history attributes and findout array of changed items which later use in hoolhelper func
         this.modelHisAttr = this.modelHisAttr.filter(p => {
             if (p !== 'createdAt' && p !== 'updatedAt' && p !== 'deletedAt'
                 && p !== 'id' && p !== 'ip' && p !== 'restoredAt'
@@ -25,18 +25,30 @@ class Hooks {
                 return p;
             }
         });
+
         //helper function for hooks
         this.hookHelper = function (user) {
+            //findout what field shoud be changed
             const change = Array.from(user._changed);
+
+            //creating for create an insert in model histories tables
             const body = {};
+
+            // get values of histoy attrs 
             const values = Object.values(user._previousDataValues);
+
+            //create for loops with the length of model history attributes for neccesary changes
             for (let i = 0; i < this.modelHisAttr.length; i++) {
                 let name = JSON.parse(JSON.stringify(this.modelHisAttr[i]));
                 if (options.fullRow) {
                     Object.assign(body, { [name]: values[i] });
                 } else {
+
+                    //this is for making sure that model_id is allways created in body object
                     if (i === 0) {
                         Object.assign(body, { [name]: values[i] });
+
+                        //check for existance of items in changes array and if there is not match we use null for value of that column in the model history table
                     } else {
                         if (!change.includes(name)) {
                             Object.assign(body, { [name]: null });
@@ -52,9 +64,12 @@ class Hooks {
         };
     }
 
+    //throw hook like a butcher
     throwHook() {
         this.model.beforeUpdate(async (user, options) => {
+            //build body object with the help of hookHelper function
             const body = this.hookHelper(user);
+            // craete an insert in modelHistory
             await this.modelHistory.create({
                 ...body,
                 opration: this.req.undo ? 'undo-update' : 'update',
@@ -83,8 +98,6 @@ class Hooks {
                 restoredAt: this.req.undo ? new Date() : null
             });
         });
-
-
     }
 }
 module.exports = Hooks;

@@ -1,18 +1,4 @@
-SELECT id,
-    firstName,
-    lastName,
-    createdAt,
-    updatedAt,
-    deletedAt
-FROM userhistories
-where id = 1
-order by hid desc
-limit 1;
-delete FROM users
-where id = 1
-UPDATE users
-SET deletedAt = null
-WHERE id = 1;
+
 -- triger for users table
 delimiter #
 CREATE TRIGGER update_user AFTER
@@ -28,8 +14,8 @@ values (
     );
 end#
 delimiter ;
--- trigger for products table
 
+-- trigger for products table
 delimiter #
 CREATE TRIGGER update_product AFTER
 UPDATE ON products FOR EACH ROW

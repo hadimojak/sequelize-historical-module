@@ -1,6 +1,7 @@
 const { sequelize, DataTypes, Sequelize, Model } = require('./sequelize');
 
-
+//for example i create User and Product models and although UserHistory and ProductHistory models and 
+//id (primary key) are build automaticly with sequelize
 class User extends Model { };
 User.init({
     firstName: {
@@ -94,6 +95,7 @@ ProductHistory.init({
     modelName: "productHistory"
 });
 
+//initialize a simple association 
 User.hasMany(Product);
 Product.belongsTo(User);
 

@@ -1,6 +1,10 @@
 const { sequelize } = require('./sequelize');
 
-const sync = async () => { await sequelize.sync({ alter: true }); };
+const sync = async (state) => {
+    let stateObj = {}
+    Object.assign(stateObj,{[JSON.parse(JSON.stringify(state))]:true})
+    await sequelize.sync({...stateObj});
+};
 
 const authentiacete = async () => { await sequelize.authenticate(); };
 
