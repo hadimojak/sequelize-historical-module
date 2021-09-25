@@ -36,7 +36,7 @@ UserHistory.init({
     platform: { type: DataTypes.STRING },
     updatedAt: {
         type: Sequelize.DATE,
-        defaultValue: new Date()
+        defaultValue: null
     },
     restoredAt: {
         type: Sequelize.DATE,
@@ -84,7 +84,7 @@ ProductHistory.init({
     platform: { type: DataTypes.STRING },
     updatedAt: {
         type: Sequelize.DATE,
-        defaultValue: new Date()
+        defaultValue: null
     },
     restoredAt: {
         type: Sequelize.DATE,
