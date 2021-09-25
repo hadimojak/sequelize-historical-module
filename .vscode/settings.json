@@ -1,0 +1,8 @@
+{
+    "editor.fastScrollSensitivity": 1,
+    "editor.scrollbar.horizontalScrollbarSize": 1,
+    "editor.scrollbar.verticalScrollbarSize": 1,
+    "editor.scrollBeyondLastColumn": 1,
+    "workbench.list.fastScrollSensitivity": 1,
+    "terminal.integrated.fastScrollSensitivity": 1
+}
