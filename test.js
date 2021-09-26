@@ -13,13 +13,13 @@ console.log(Object.keys(sequelize.models))
 app.get('/', (req, res, next) => {
 
     //initialize the hooks for models
-
     models.forEach(p => {
         for (let key in sequelize.models) {
             if (key.includes('history') && key.includes(p.getTableName().toString())) {
                 modelHistory = sequelize.models[key];
             }
         }
+        //This is where we create hooks
         new hook(req, p, modelHistory, { fullRow: false }).throwHook();
 
     });
