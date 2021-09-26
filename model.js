@@ -6,97 +6,111 @@ class User extends Model { };
 User.init({
     firstName: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     }, lastName: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
     createdAt: Sequelize.DATE,
     updatedAt: Sequelize.DATE,
 },
     {
-        sequelize: sequelize,freezeTableName:true,
+        sequelize: sequelize, freezeTableName: true,
         modelName: "user", paranoid: true
     }
 );
 
-class UserHistory extends Model { };
-UserHistory.init({
-    user_id: { type: DataTypes.INTEGER },
-    firstName: {
-        type: DataTypes.STRING,
-        allowNull: true
-    },
-    lastName: {
-        type: DataTypes.STRING,
-        allowNull: true
-    },
-    ip: { type: DataTypes.STRING },
-    opration: { type: DataTypes.STRING },
-    platform: { type: DataTypes.STRING },
-    updatedAt: {
-        type: Sequelize.DATE,
-        defaultValue: null
-    },
-    restoredAt: {
-        type: Sequelize.DATE,
-        defaultValue: null
-    }
-}, {
-    sequelize: sequelize, timestamps: false,freezeTableName:true,
-    modelName: "userHistory"
-});
+// class UserHistory extends Model { };
+// UserHistory.init({
+//     user_id: { type: DataTypes.INTEGER },
+//     firstName: {
+//         type: DataTypes.STRING,
+//         allowNull: true
+//     },
+//     lastName: {
+//         type: DataTypes.STRING,
+//         allowNull: true
+//     },
+//     ip: { type: DataTypes.STRING },
+//     opration: { type: DataTypes.STRING },
+//     platform: { type: DataTypes.STRING },
+//     updatedAt: {
+//         type: Sequelize.DATE,
+//         defaultValue: null
+//     },
+//     restoredAt: {
+//         type: Sequelize.DATE,
+//         defaultValue: null
+//     }
+// }, {
+//     sequelize: sequelize, timestamps: false,freezeTableName:true,
+//     modelName: "userHistory"
+// });
 
 class Product extends Model { };
 Product.init({
     title: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     }, price: {
         type: DataTypes.INTEGER,
-        allowNull: false
-    }, store: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    createdAt: Sequelize.DATE,
-    updatedAt: Sequelize.DATE,
-}, {
-    sequelize: sequelize,freezeTableName:true,
-    modelName: "product", paranoid: true
-}
-);
-
-class ProductHistory extends Model { };
-ProductHistory.init({
-    product_id: { type: DataTypes.INTEGER },
-    title: {
-        type: DataTypes.STRING,
-    },
-    price: {
-        type: DataTypes.INTEGER,
+        allowNull: true
     }, store: {
         type: DataTypes.INTEGER,
         allowNull: true
     },
-    ip: { type: DataTypes.STRING },
-    opration: { type: DataTypes.STRING },
-    platform: { type: DataTypes.STRING },
-    updatedAt: {
-        type: Sequelize.DATE,
-        defaultValue: null
-    },
-    restoredAt: {
-        type: Sequelize.DATE,
-        defaultValue: null
-    }
+    createdAt: Sequelize.DATE,
+    updatedAt: Sequelize.DATE,
 }, {
-    sequelize: sequelize, timestamps: false,freezeTableName:true,
-    modelName: "productHistory"
-});
+    sequelize: sequelize, freezeTableName: true,
+    modelName: "product", paranoid: true
+}
+);
+
+// class ProductHistory extends Model { };
+// ProductHistory.init({
+//     product_id: { type: DataTypes.INTEGER },
+//     title: {
+//         type: DataTypes.STRING,
+//     },
+//     price: {
+//         type: DataTypes.INTEGER,
+//     }, store: {
+//         type: DataTypes.INTEGER,
+//         allowNull: true
+//     },
+//     ip: { type: DataTypes.STRING },
+//     opration: { type: DataTypes.STRING },
+//     platform: { type: DataTypes.STRING },
+//     updatedAt: {
+//         type: Sequelize.DATE,
+//         defaultValue: null
+//     },
+//     restoredAt: {
+//         type: Sequelize.DATE,
+//         defaultValue: null
+//     }
+// }, {
+//     sequelize: sequelize, timestamps: false,freezeTableName:true,
+//     modelName: "productHistory"
+// });
 
 //initialize a simple association 
+
 User.hasMany(Product);
 Product.belongsTo(User);
 
-module.exports = { User, Product, UserHistory, ProductHistory };
+let justOnce = true;
+if (justOnce) {
+    (async () => {
+        await User.sync({ alter: true });
+        await Product.sync({ alter: true });
+    })();
+
+    justOnce = false;
+}
+
+
+const models = [User, Product];
+
+module.exports = { models, User, Product };

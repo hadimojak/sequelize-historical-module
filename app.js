@@ -1,17 +1,32 @@
 const epxress = require('express');
 const app = epxress();
 const { sync, authentiacete } = require('./sync');
-const { Product, User, UserHistory, ProductHistory } = require('./model');
-const hooks = require('./hooks');
+const { models, Product, User } = require('./model');
+const { sequelize, DataTypes, Sequelize, Model } = require('./sequelize');
 
+const hook = require('./hooks');
+
+var modelHistory;
+
+console.log(Object.keys(sequelize.models))
 
 app.get('/', (req, res, next) => {
+
     //initialize the hooks for models
-    new hooks(req, User, UserHistory, { fullRow: false }).throwHook();
-    new hooks(req, Product, ProductHistory, { fullRow: false }).throwHook();
+
+    models.forEach(p => {
+        for (let key in sequelize.models) {
+            if (key.includes('history') && key.includes(p.getTableName().toString())) {
+                modelHistory = sequelize.models[key];
+            }
+        }
+        new hook(req, p, modelHistory, { fullRow: false }).throwHook();
+
+    });
 
     //create multiple insert in database and It's easy to see
     async function create() {
+
         User.bulkCreate([
             { firstName: 'hadi', lastName: 'arbabi' },
             { firstName: 'ahmad', lastName: 'asadi' },
@@ -25,7 +40,7 @@ app.get('/', (req, res, next) => {
                     { title: 'chair', price: 1633, store: 1, userId: 1 },]);
             }).catch(err => { console.log(err); });
     };
-    create();
+    // create();
 
     // update single row of any model
     async function update1(model, pk, changes) {
@@ -51,7 +66,7 @@ app.get('/', (req, res, next) => {
             //check for equality of changes to pre values
             const modelfeilds = await model.findByPk(pk);
             for (let key in changes) {
-                if (modelfeilds[key] === changes[key]) { delete changes[key];}
+                if (modelfeilds[key] === changes[key]) { delete changes[key]; }
             }
             if (Object.keys(changes).length === 0) { throw new Error('change object are equal to perevius values'); }
 
@@ -62,7 +77,7 @@ app.get('/', (req, res, next) => {
         }
         catch (error) { console.log(error.message); }
     }
-    // update1(User, 1, { firstName: 'hadi', lastName: 'hoseini' });
+    // update1(User, 1, { firstName: 'reza',lastName:'sahih' });
 
     //destroy single row of any model
     async function destroy(model, pk) {
@@ -76,7 +91,7 @@ app.get('/', (req, res, next) => {
 
             //destroy process
             model.destroy({ where: { id: pk }, individualHooks: true })
-                .then(() => { console.log('product destroyed'); })
+                .then(() => { console.log(`${model.getTableName()} destroyed`); })
                 .catch(err => { console.log(err); });
         } catch (error) { console.log(error.message); }
     }
@@ -101,14 +116,14 @@ app.get('/', (req, res, next) => {
                     throw new Error('this row is already restored or not deleted at all');
                 }
                 //undo-delete(restore) process
-                const user = await model.findByPk(pk, { paranoid: false });
-                await user.restore();
+                const row = await model.findByPk(pk, { paranoid: false });
+                await row.restore().then(data => { console.log(`${model.getTableName()} restored`); });
             }).catch(err => { console.log(err); });
 
 
         } catch (error) { console.log(error.message); }
     };
-    // undoDelete(User, 2);
+    // undoDelete(User, 1);
 
 
     //undo-update on any model
@@ -118,7 +133,7 @@ app.get('/', (req, res, next) => {
 
         //get table Name from model and remove plural "S" from the end of table name
         let tablename = model.tableName;
-        tablename = tablename.slice(0, tablename.length - 1);
+        console.log(tablename);
 
         //creating search term object
         let searchTerm = {};
@@ -172,26 +187,24 @@ app.get('/', (req, res, next) => {
             console.log(undoObject);
 
             //undo-update process
-            await model.update({ ...undoObject }, { where: { id: Object.values(history)[1] }, individualHooks: true });
+            await model.update({ ...undoObject }, { where: { id: Object.values(history)[1] }, individualHooks: true }).then(data => { console.log('user updated'); });
         } catch (error) { console.log(error.message); }
     };
-    // undoUpdate(User, UserHistory, 1, 1);
+    // undoUpdate(User, sequelize.models['userhistory'], 1,1);
 
     //this is only for example 
     res.json('userIp');
 });
 
 //we can although use sync('state') Instead of authentiacete with 'alter' and 'force' parameters
-sync('alter')
-// authentiacete()
-    .then((async data => {
-        try {
-            await app.listen(3000);
-            console.log('db connected & server runs');
-        } catch (error) {
-            throw new Error(error);
-        }
-    })).catch(err => { console.log(err); });
+authentiacete().then((async data => {
+    try {
+        await app.listen(3000);
+        console.log('db connected & server runs');
+    } catch (error) {
+        throw new Error(error);
+    }
+})).catch(err => { console.log(err); });
 
 
 

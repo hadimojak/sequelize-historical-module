@@ -1,6 +1,44 @@
 //require user agant for get the platform information and Anything you need from request
 const useragent = require('express-useragent');
+const { sequelize, DataTypes, Sequelize, Model } = require('./sequelize');
+const { models, Product, User } = require('./model');
 
+models.forEach(async p => {
+    const historyTableName = p.getTableName().toLowerCase() + 'history';
+    const body = {};
+
+    // console.log(p.rawAttributes['firstName'])
+    const attributesNumber = Object.keys(p.rawAttributes).filter(y => {
+        if (y !== 'id' && y !== 'deletedAt' && y !== 'updatedAt' && y !== 'createdAt') {
+            return y;
+        }
+    });
+
+    Object.assign(body, { [p.getTableName() + '_id']: { type: DataTypes.INTEGER } });
+    attributesNumber.forEach(x => {
+        Object.assign(body, { [x]: p.rawAttributes[x] });
+    });
+
+    await sequelize.define(historyTableName, {
+        ...body,
+        ip: { type: DataTypes.STRING },
+        opration: { type: DataTypes.STRING },
+        platform: { type: DataTypes.STRING },
+        updatedAt: {
+            type: Sequelize.DATE,
+            defaultValue: new Date()
+        },
+        restoredAt: {
+            type: Sequelize.DATE,
+            defaultValue: null
+        }
+    }, {
+        sequelize: sequelize, timestamps: false, freezeTableName: true,
+        modelName: historyTableName
+    }
+    ).sync()
+
+});
 
 
 class Hooks {
