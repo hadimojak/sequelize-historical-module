@@ -31,9 +31,9 @@ npm i --save sequelize-Journaling
 
 ## Usage
 
-for use this package you have to create model and history model and then initialize Hooks class \
-and pass them as parameter to hooks instance and the call the throwHook at the end just like i \
-do in app.js file .
+for use this package you have to create model and history model and then initialize Hooks &nbsp; 
+class and pass them as parameter to hooks instance and the call the throwHook at the end  &nbsp;
+just like i do in app.js file .
 
 ```javascript
 const hooks = require("./hooks");
@@ -43,7 +43,7 @@ new hooks(req, Product, ProductHistory, { fullRow: false }).throwHook();
 ```
 ## Description
 
-we are working on the functionality for building history Model and history table automaticly and \
-add hooks to them by the one instance of Hook class.
+we are working on the functionality for building history Model and history table automaticly &nbsp;
+and add hooks to them by the one instance of Hook class.
 
 # end
