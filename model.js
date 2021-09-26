@@ -15,7 +15,7 @@ User.init({
     updatedAt: Sequelize.DATE,
 },
     {
-        sequelize: sequelize,
+        sequelize: sequelize,freezeTableName:true,
         modelName: "user", paranoid: true
     }
 );
@@ -43,7 +43,7 @@ UserHistory.init({
         defaultValue: null
     }
 }, {
-    sequelize: sequelize, timestamps: false,
+    sequelize: sequelize, timestamps: false,freezeTableName:true,
     modelName: "userHistory"
 });
 
@@ -62,7 +62,7 @@ Product.init({
     createdAt: Sequelize.DATE,
     updatedAt: Sequelize.DATE,
 }, {
-    sequelize: sequelize,
+    sequelize: sequelize,freezeTableName:true,
     modelName: "product", paranoid: true
 }
 );
@@ -91,7 +91,7 @@ ProductHistory.init({
         defaultValue: null
     }
 }, {
-    sequelize: sequelize, timestamps: false,
+    sequelize: sequelize, timestamps: false,freezeTableName:true,
     modelName: "productHistory"
 });
 

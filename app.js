@@ -1,6 +1,5 @@
 const epxress = require('express');
 const app = epxress();
-const { sequelize, Sequelize, DataTypes, Model } = require('./sequelize');
 const { sync, authentiacete } = require('./sync');
 const { Product, User, UserHistory, ProductHistory } = require('./model');
 const hooks = require('./hooks');
@@ -26,7 +25,7 @@ app.get('/', (req, res, next) => {
                     { title: 'chair', price: 1633, store: 1, userId: 1 },]);
             }).catch(err => { console.log(err); });
     };
-    // create();
+    create();
 
     // update single row of any model
     async function update1(model, pk, changes) {
@@ -183,8 +182,8 @@ app.get('/', (req, res, next) => {
 });
 
 //we can although use sync('state') Instead of authentiacete with 'alter' and 'force' parameters
-// sync('force')
-authentiacete()
+sync('alter')
+// authentiacete()
     .then((async data => {
         try {
             await app.listen(3000);
