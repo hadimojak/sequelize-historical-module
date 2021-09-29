@@ -109,7 +109,7 @@ if (justOnce) {
 
     justOnce = false;
 }
-
+console.log(justOnce)
 
 const models = [User, Product];
 

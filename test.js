@@ -8,7 +8,7 @@ const hook = require('./hooks');
 
 var modelHistory;
 
-console.log(Object.keys(sequelize.models))
+console.log(Object.keys(sequelize.models));
 
 app.get('/', (req, res, next) => {
 
@@ -20,7 +20,14 @@ app.get('/', (req, res, next) => {
             }
         }
         //This is where we create hooks
-        new hook(req, p, modelHistory, { fullRow: false }).throwHook();
+        let justOnce = true;
+        if (justOnce) {
+            new hook(req, p, modelHistory, { fullRow: false }).throwHook();
+
+
+            justOnce = false;
+        }
+        console.log(justOnce);
 
     });
 
