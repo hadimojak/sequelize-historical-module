@@ -1,6 +1,6 @@
 # sequelize-Journaling
 
-\***hooks.js** : this file is Responsible for creating hooks in sequelize models \
+**hooks.js** : this file is Responsible for creating hooks in sequelize models \
 &nbsp;&emsp;and all the hooks are export from the file and require and initialize in app.js \
 &nbsp;&emsp;file.
 
