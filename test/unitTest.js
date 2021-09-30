@@ -2,7 +2,7 @@ const { models, Product, User } = require('../model');
 const { sequelize } = require("../sequelize");
 const fs = require('fs');
 const StreamArray = require('stream-json/streamers/StreamArray');
-const { Worker } = require('worker_threads')
+const { Worker } = require('worker_threads');
 
 async function update1(model, pk, changes) {
     try {
@@ -41,26 +41,21 @@ async function update1(model, pk, changes) {
 // update1(User, 1, { firstName: 'hjkhjk',lastName:'hggghk' }).then(data=>{  process.exit(1);})
 
 async function create() {
-    // return new Promise(async (resolve, reject) => {
-    //     const start = Date.now();
+    // await fs.createReadStream('./test/data.json')
+    //     .pipe(StreamArray.withParser())
+    //     .on('data', async row => {
+    //         const firstName = row.value.name.split(' ')[0];
+    //         const lastName = row.value.name.split(' ')[1];
+    //         console.log(firstName, lastName);
+    //         User.create({ firstName: firstName, lastName: lastName });
+    //     })
+    //     .on('error', err => { })
+    //     .on('end', () => {
+    //         console.log('bulkcreate ended');
+    //     });
 
-    //     await fs.createReadStream('data.json')
-    //         .pipe(StreamArray.withParser())
-    //         .on('data', async row => {
-    //             const firstName = row.value.name.split(' ')[0];
-    //             const lastName = row.value.name.split(' ')[1];
-    //             console.log(firstName, lastName);
-    //             await User.create({ firstName: firstName, lastName: lastName });
-    //         })
-    //         .on('error', err => { reject(err); })
-    //         .on('end', () => {
-    //             console.log('bukdcreate ended');
-    //             resolve();
-    //         });
-    //     const stop = Date.now();
-    //     console.log(`Time Taken to execute = ${(stop - start) / 1000} seconds`);
-    // });
 
+    // resolve(process.exit(1));
 
 
     await User.bulkCreate([
@@ -78,4 +73,4 @@ async function create() {
             console.log('products created');
         }).catch(err => { console.log(err); });
 };
-create().then();
+create().then(data => {  });

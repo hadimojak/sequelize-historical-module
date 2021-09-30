@@ -1,25 +1,25 @@
 # sequelize-Journaling
 
-\***\*hooks.js\*\*** : this file is Responsible for creating hooks in sequelize models \
+\***hooks.js** : this file is Responsible for creating hooks in sequelize models \
 &nbsp;&emsp;and all the hooks are export from the file and require and initialize in app.js \
 &nbsp;&emsp;file.
 
-\***\*test.js\*\*** : runs simple express server for one route('/') on localhost:3000 and \
+**test.js** : runs simple express server for one route('/') on localhost:3000 and \
 &nbsp;&emsp;virtualize create - update - delete - undoDelete - undoUpdate action in for \
 &nbsp;&emsp;example MySQL database that hooks class is called and initialized in the \
 &nbsp;&emsp;beginning of the file. At the end authenticate the connection throw db and \
 &nbsp;&emsp;run the server.
 
-\***\*model.js\*\*** : build all the models once sync with {alter:true} to create the model.
+**model.js** : build all the models once sync with {alter:true} to create the model.
 
-\***\*trigger-on-mysql.sql\*\*** :  It is a practical SQL queries  MySQL triggers for my two models.
+**trigger-on-mysql.sql** :  It is a practical SQL queries  MySQL triggers for my two models.
 
-\***\*sequelize.js\*\*** : Create sequelize connection and exports required tools for usage \
+**sequelize.js** : Create sequelize connection and exports required tools for usage \
 &nbsp;&emsp;in other files.
 
-\***\*sync.js\*\*** : Define sync and authenticate function of sequelzie and exports them.
+**sync.js** : Define sync and authenticate function of sequelzie and exports them.
 
-\***\*unitTest.js\*\*** : Suppose that you created your model and run the server and connect &nbsp;
+**unitTest.js** : Suppose that you created your model and run the server and connect &nbsp;
 to db and create table and history tables then you can use this file to do action to your &nbsp;
 database for test performance, etc.
 
