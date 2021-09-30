@@ -19,8 +19,8 @@
 
 **sync.js** : Define sync and authenticate function of sequelzie and exports them.
 
-**unitTest.js** : Suppose that you created your model and run the server and connect 
-&nbsp;&emsp;to db and create table and history tables then you can use this file to do action to your 
+**unitTest.js** : Suppose that you created your model and run the server and connect \
+&nbsp;&emsp;to db and create table and history tables then you can use this file to do action to your \
 &nbsp;&emsp;database for test performance, etc.
 
 
