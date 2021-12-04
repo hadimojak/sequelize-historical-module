@@ -204,14 +204,14 @@ app.get('/', (req, res, next) => {
 });
 
 //we can although use sync('state') Instead of authentiacete with 'alter' and 'force' parameters
-authentiacete().then((async data => {
+authentiacete().then(async data => {
     try {
         await app.listen(3000);
         console.log('db connected & server runs');
     } catch (error) {
         throw new Error(error);
     }
-})).catch(err => { console.log(err); });
+}).catch(err => { console.log(err); });
 
 
 
