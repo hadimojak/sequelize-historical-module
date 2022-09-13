@@ -1,6 +1,6 @@
 {
   "name": "sequelize-journaling",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -15,7 +15,7 @@
     "undo-update",
     "undo-delete"
   ],
-  "repository": {"type": "git","url": ""},
+  "repository": {"type": "git","url": "https://github.com/hadimojak/sequelize-historical-module"},
   "author": "",
   "license": "ISC",
   "dependencies": {
